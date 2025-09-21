@@ -13,13 +13,6 @@ class Program
 
 
 
-
-
-
-
-
-
-
         // string firstName = "BOb";
 
         //Console.WriteLine("Hello " + firstName);
