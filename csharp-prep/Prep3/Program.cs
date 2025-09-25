@@ -41,7 +41,7 @@ class Program
             }
             else { playAgain = false; }
 
-        } while (playAgain == true);
+        } while (playAgain);
         
 
     }
