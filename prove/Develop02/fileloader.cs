@@ -92,7 +92,6 @@ public static class File
             Console.WriteLine("There are no entries currently on file.");
         }
 
-
         mixed_list.Add(newchoosenpromptlist);
         mixed_list.Add(newentrylist);
         mixed_list.Add(newdatetimelist);
@@ -126,7 +125,7 @@ public static class File
                     savedatetime = datetimelist[counter];
                     savechoosenprompt = choosenpromptlist[counter];
                     saveentry = entrylist[counter];
-                    outputFile.WriteLine($"{savedatetime}, {savechoosenprompt}, {saveentry}");
+                    outputFile.WriteLine($"{savedatetime},{savechoosenprompt},{saveentry}");
                     counter++;
                 }
             }
