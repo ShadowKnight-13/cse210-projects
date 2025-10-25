@@ -11,7 +11,6 @@ class Program
 
         Scripture script1 = new Scripture();
         script1.GetScriptureFromUser();
-
         script1.Memorizor(ref1);
         
     }
