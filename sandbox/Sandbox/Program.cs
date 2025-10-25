@@ -56,15 +56,7 @@ class Program
             counter1++;
 
             input = Console.ReadLine();
-            try
-            {
-                Console.Clear();
-            }
-            catch (IOException)
-            {
-                Console.WriteLine("Console.Clear() failed.");
-            }
-
+            try{ Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
         }
     }
 }

@@ -135,23 +135,14 @@ public class Reference
 
     public void DisplayReference()
     {
-        if (_startVerse == _endVerse)
+        if (_endVerse == 0)
         {
-            Console.WriteLine($"{_book} {_chapter}: {_startVerse}");
+            Console.WriteLine($"{_book} {_chapter}:{_startVerse}");
         }
         else
         {
-           Console.WriteLine($"{_book} {_chapter}: {_startVerse}-{_endVerse}"); 
+           Console.WriteLine($"{_book} {_chapter}:{_startVerse}-{_endVerse}"); 
         }
         
-    }
-    
-    private bool SingleorMoreVerses()
-    {
-        if (_startVerse == _endVerse)
-        {
-            return true;
-        }
-        return false;
     }
 }
