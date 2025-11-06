@@ -30,7 +30,7 @@ public class Activity
     {
         Console.WriteLine("Well done!!");
         Thread.Sleep(1500);
-        DisplayAnimation(4,$"Well done!! \nYou have completed {_duration} seconds of the {_activityName} activity");
+        DisplayAnimation(4,$"Well done!! \nYou have completed {_duration} seconds of the {_activityName}");
     }
 
     public void DisplayAnimation(int seconds, string message = "")

@@ -78,7 +78,17 @@ public class Breathing_Activity : Activity
         }
         else if (duration % 2 == 0)
         {
-            if (duration >= 6)
+            if (duration >= 10)
+            {
+                _breath_in_lenght = 4;
+                _breath_out_lenght = 6;
+            }
+            else if (duration >= 8)
+            {
+                _breath_in_lenght = 3;
+                _breath_out_lenght = 5;
+            }
+            else if (duration >= 6)
             {
                 _breath_in_lenght = 3;
                 _breath_out_lenght = 3;

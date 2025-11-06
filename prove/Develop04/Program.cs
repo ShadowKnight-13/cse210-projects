@@ -40,8 +40,16 @@ class Program
             Breathing_Activity breathingActivity = new Breathing_Activity();
             breathingActivity.exucute_breathing_activity();
         }
-
-
+        else if (menuchoice == "2")
+        {
+            Reflection_Activity reflectionActivity = new Reflection_Activity();
+            reflectionActivity.ExacuteRefelctionActivity();
+        }
+        else if (menuchoice == "3")
+        {
+            Listing_Activity listingActivity = new Listing_Activity();
+            listingActivity.ExecuteListingActivity();
+        }
 
         return menuchoice;
     }
