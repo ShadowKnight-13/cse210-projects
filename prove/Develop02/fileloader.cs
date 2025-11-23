@@ -117,7 +117,7 @@ public static class File
 
         using (StreamWriter outputFile = new StreamWriter(filename))
         {
-            if (datetimelist.Count > 0)
+            if (datetimelist.Count() > 0)
             {
                 int counter = 0;
                 while (counter < datetimelist.Count)
