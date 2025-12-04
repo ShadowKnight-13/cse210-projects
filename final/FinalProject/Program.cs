@@ -1,5 +1,6 @@
 using System;
 using System.Dynamic;
+using System.Runtime.CompilerServices;
 
 class Program
 {
@@ -54,6 +55,7 @@ class Program
                     break;
             }
 
+            try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
             Console.WriteLine("Welcome to the DND Encounter Tracker!\n");
             choice1num = DisplayMenu();
         }
@@ -62,7 +64,8 @@ class Program
 
     static int DisplayMenu()
     {
-        Console.WriteLine("Choose an option from the menu below.\n");
+        try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
+        Console.WriteLine("Choose an option from the menu below.");
         Console.WriteLine("1: Load File\n2: Save File\n3: Add Player Character\n4: Add Monster\n5: Start Encounter\n6: Edit Encounter\n7: View Log\n8: Quit");
 
         string choice1 = Console.ReadLine();
@@ -88,12 +91,20 @@ class Program
     {
         PlayerCharacter player = new PlayerCharacter("","",0,0,0,0);
 
+        try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
+
         player.UpdatePlayerName(player.GetPlayerNameFromUser());
+        Console.WriteLine(" ");
         player.UpdateName(player.GetCharacterNameFromUser());
+        Console.WriteLine(" ");
         player.UpdateAC(player.GetCharacterACFromUser());
+        Console.WriteLine(" ");
         player.UpdateMaxHP(player.GetMaxHPFromUser());
         player.UpdateCurrentHP(player.StartingCurrentHP());
+        Console.WriteLine(" ");
         player.UpdateInitiativeBonus(player.GetInitiativeBonusFromUser());
+
+        try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
 
         List<Character> characters = [];
         foreach(PlayerCharacter pc in _playerCharacter)
@@ -119,20 +130,34 @@ class Program
     {
         Monster monster = new Monster("","",0,0,0,0,0,0,0,0,0);
 
+        try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
+
         monster.UpdateName(monster.GetCharacterNameFromUser());
+        Console.WriteLine(" ");
         monster.UpdateMonsterID(monster.GetMonsterIDFromUser());
+        Console.WriteLine(" ");
         monster.UpdateAC(monster.GetCharacterACFromUser());
+        Console.WriteLine(" ");
         monster.UpdateMaxHP(monster.GetMaxHPFromUser());
         monster.UpdateCurrentHP(monster.StartingCurrentHP());
 
+        try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
+
         monster.UpdateSTR(monster.GetSTRFromUser());
+        Console.WriteLine(" ");
         monster.UpdateDEX(monster.GetDEXFromUser());
+        Console.WriteLine(" ");
         monster.UpdateCON(monster.GetCONFromUser());
+        Console.WriteLine(" ");
         monster.UpdateINT(monster.GetINTFromUser());
+        Console.WriteLine(" ");
         monster.UpdateWIS(monster.GetWISFromUser());
+        Console.WriteLine(" ");
         monster.UpdateCHA(monster.GetCHAFromUser());
 
         monster.UpdateInitiativeBonus(monster.modifierCalulator(monster.GetDEX()));
+
+        try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
 
         List<Character> characters = [];
         foreach(Monster m in _monsters)
@@ -159,6 +184,7 @@ class Program
 
         while ( choice10 != "6")
         {
+            try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
             Console.WriteLine("What do you wish to edit?");
             Console.WriteLine("1: Remove Character\n2: Clone Monster\n3: Edit Player Character\n4: Edit Monster\n5: Toggle Linear Initivate\n6: Quit");
 
@@ -172,19 +198,8 @@ class Program
 
             if (choice10 == "1")
             {
-
-                List<Character> characters = [];
-
-                foreach(PlayerCharacter pc in _playerCharacters)
-                {
-                    characters.Add(pc);
-                }
-                foreach(Monster m in _monsters)
-                {
-                    characters.Add(m);
-                }
-
-                int choice13 = chooseCharacter(characters);
+                try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
+                int choice13 = CombinedChooseCharacter(_playerCharacters, _monsters);
 
                 if (choice13 == 0){}
                 else if (choice13 < _playerCharacters.Count())
@@ -199,22 +214,12 @@ class Program
             }
             else if (choice10 == "2")
             {
+                try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
                 List<Character> characters = [];
 
                 if (_monsters.Count()> 0)
                 {
-                    foreach(Monster M in _monsters)
-                    {
-                        characters.Add(M);
-                    }
-
-                    int choice14 = chooseCharacter(characters);
-
-                    Monster m = _monsters[choice14-1];
-
-                    m.UpdateMonsterID(m.GetMonsterIDFromUser());
-
-                    _monsters.Add(m);
+                    _monsters = CloneMonster(_monsters);
                 }
                 else
                 {
@@ -223,7 +228,7 @@ class Program
             }
             else if (choice10 == "3")
             {
-                
+                try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
                 List<Character> characters = [];
 
                 foreach(PlayerCharacter pc in _playerCharacters)
@@ -233,90 +238,11 @@ class Program
 
                 int choice15 = chooseCharacter(characters);
 
-                PlayerCharacter PC = _playerCharacters[choice15 -1];
-
-                string choice16 = "";
-                while (choice16 != "8")
-                {
-                    Console.WriteLine("What would you like to edit?\n");
-                    Console.WriteLine("1: Player's Name\n2: Character's Name\n3: AC\n4: Current HP\n5: Max HP\n6: Initiative Bonus\n7: Conditions\n8: Quit");
-
-                    choice16 = Console.ReadLine();
-
-                    while (choice16 != "1" & choice16 != "2" & choice16 != "3" & choice16 != "4" & choice16 != "5" & choice16 != "6" & choice16 != "7" & choice16 != "8")
-                    {
-                        Console.WriteLine("Invaild Input, Please Try again.");
-                        choice16 = Console.ReadLine();
-                    }
-
-                    if (choice16 == "1")
-                    {
-                        PC.UpdatePlayerName(PC.GetPlayerNameFromUser());
-                    }
-                    else if (choice16 == "2")
-                    {
-                       PC.UpdateName(PC.GetCharacterNameFromUser()); 
-                    }
-                    else if (choice16 == "3")
-                    {
-                      PC.UpdateAC(PC.GetCharacterACFromUser());  
-                    }
-                    else if (choice16 == "4")
-                    {
-                      PC.UpdateCurrentHP(PC.GetCurrentHPFromUser());  
-                    }
-                    else if (choice16 == "5")
-                    {
-                        PC.UpdateMaxHP(PC.GetMaxHPFromUser());
-                    }
-                    else if (choice16 == "6")
-                    {
-                        PC.UpdateInitiativeBonus(PC.GetInitiativeBonusFromUser());
-                    }
-                    else if (choice16 == "7")
-                    {
-                        if(PC.GetActiveConditions() is not null)
-                        {
-                           foreach (string condition in PC.GetActiveConditions())
-                            {
-                                Console.Write($"{condition}, ");
-                            } 
-                            Console.WriteLine(" ");
-                        }
-
-                        Console.WriteLine("\n\n1: Add Condition\n2: Remove Condition\n3: Clear Conditions\n4: Back");
-                        string choice17 = Console.ReadLine();
-
-                        while (choice17 != "1" & choice17!= "2" & choice17!= "3" & choice17!= "4")
-                        {
-                            Console.WriteLine("Invaild Input, Please Try again.");
-                            choice17 = Console.ReadLine();
-                        }
-
-                        if (choice17 == "1")
-                        {
-                            Console.WriteLine("What Condition do you add?");
-                            string Condition = Console.ReadLine();
-
-                            PC.AddCondition(Condition);
-                        }
-                        else if (choice17 == "2")
-                        {
-                            PC.RemoveCondition();
-                        }
-                        else if (choice17 == "3")
-                        {
-                            PC.ClearConditions();
-                        }
-                    }
-
-                    _playerCharacters.RemoveAt(choice15 -1);
-                    _playerCharacters.Add(PC);
-                }  
+                _playerCharacters = editPlayerCharacter(_playerCharacters,choice15);
             }
             else if (choice10 == "4")
             {
-
+                try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
               List<Character> characters = [];
 
                 foreach(Monster m in _monsters)
@@ -326,126 +252,11 @@ class Program
 
                 int choice15 = chooseCharacter(characters);
 
-                Monster M = _monsters[choice15 -1];
-
-                string choice16 = "";
-                while (choice16 != "9")
-                {
-                    Console.WriteLine("What would you like to edit?\n");
-                    Console.WriteLine("1: Monster's Name\n2: Monster's ID\n3: AC\n4: Current HP\n5: Max HP\n6: Initiative Bonus\n7: Conditions\n8: Ability Scores\n9: Quit");
-
-                    choice16 = Console.ReadLine();
-
-                    while (choice16 != "1" & choice16 != "2" & choice16 != "3" & choice16 != "4" & choice16 != "5" & choice16 != "6" & choice16 != "7" & choice16 != "8" & choice16 !="9")
-                    {
-                        Console.WriteLine("Invaild Input, Please Try again.");
-                        choice16 = Console.ReadLine();
-                    }
-
-                    if (choice16 == "1")
-                    {
-                        M.UpdateName(M.GetCharacterNameFromUser());
-                    }
-                    else if (choice16 == "2")
-                    {
-                        M.UpdateMonsterID(M.GetMonsterIDFromUser());
-                    }
-                    else if (choice16 == "3")
-                    {
-                      M.UpdateAC(M.GetCharacterACFromUser());  
-                    }
-                    else if (choice16 == "4")
-                    {
-                      M.UpdateCurrentHP(M.GetCurrentHPFromUser());  
-                    }
-                    else if (choice16 == "5")
-                    {
-                        M.UpdateMaxHP(M.GetMaxHPFromUser());
-                    }
-                    else if (choice16 == "6")
-                    {
-                        M.UpdateInitiativeBonus(M.GetInitiativeBonusFromUser());
-                    }
-                    else if (choice16 == "7")
-                    {
-                        if(M.GetActiveConditions() is not null)
-                        {
-                           foreach (string condition in M.GetActiveConditions())
-                            {
-                                Console.Write($"{condition}, ");
-                            } 
-                            Console.WriteLine(" ");
-                        }
-
-                        Console.WriteLine("\n\n1: Add Condition\n2: Remove Condition\n3: Clear Conditions\n4: Back");
-                        string choice17 = Console.ReadLine();
-
-                        while (choice17 != "1" & choice17!= "2" & choice17!= "3" & choice17!= "4")
-                        {
-                            Console.WriteLine("Invaild Input, Please Try again.");
-                            choice17 = Console.ReadLine();
-                        }
-
-                        if (choice17 == "1")
-                        {
-                            Console.WriteLine("What Condition do you add?");
-                            string Condition = Console.ReadLine();
-
-                            M.AddCondition(Condition);
-                        }
-                        else if (choice17 == "2")
-                        {
-                            M.RemoveCondition();
-                        }
-                        else if (choice17 == "3")
-                        {
-                            M.ClearConditions();
-                        }
-                    }
-                    else if (choice16 == "8")
-                    {
-
-                        Console.WriteLine("Which Ability Do you want to update?");
-                        Console.WriteLine("1: STR\n2: DEX\n3: CON\n4: INT\n5: WIS\n6: CHA\n7: None");
-                        string choice18 = Console.ReadLine();
-
-                        while (choice18 != "1" & choice18 != "2" & choice18 != "3" & choice18 != "4" & choice18 != "5" & choice18 != "6" & choice18 != "7")
-                        {
-                            Console.WriteLine("Invaild Input, Please Try again.");
-                            choice18 = Console.ReadLine();
-                        }
-
-                        if (choice18 == "1")
-                        {
-                            M.UpdateSTR(M.GetSTRFromUser());
-                        }
-                        else if (choice18 == "2")
-                        {
-                            M.UpdateDEX(M.GetDEXFromUser());
-                            M.UpdateInitiativeBonus(M.modifierCalulator(M.GetDEX()));
-                        }
-                        else if (choice18 == "3")
-                        {
-                            M.UpdateCON(M.GetCONFromUser());
-                        }
-                        else if (choice18 == "4")
-                        {
-                            M.UpdateINT(M.GetINTFromUser());
-                        }
-                        else if (choice18 == "5")
-                        {
-                            M.UpdateWIS(M.GetWISFromUser());
-                        }
-                        else if (choice18 == "6")
-                        {
-                            M.UpdateCHA(M.GetCHAFromUser()); 
-                        }
-                    
-                    }
-                }  
+                _monsters = EditMonster(_monsters, choice15); 
             }
             else if (choice10 == "5")
             {
+                try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
                 int True = 0;
                 int False = 0;
 
@@ -526,7 +337,9 @@ class Program
     }
 
 
-    static int chooseCharacter(List<Character> list)
+
+
+    static int chooseCharacter(List<Character>list)
     {
 
         if (list.Count()>0)
@@ -566,6 +379,10 @@ class Program
         return 0;
     }
 
+
+
+
+
     public static bool linearInitiativeTorF(List<Character> list)
     {
         int True = 0;
@@ -597,6 +414,251 @@ class Program
         {
             return true;
         }
+    }
+
+
+
+
+
+    static int CombinedChooseCharacter(List<PlayerCharacter> _playerCharacters, List<Monster> _monsters)
+    {
+        List<Character> characters = [];
+
+        foreach(PlayerCharacter pc in _playerCharacters)
+        {
+            characters.Add(pc);
+        }
+
+        foreach(Monster m in _monsters)
+        {
+            characters.Add(m);
+        }
+
+        int choice13 = chooseCharacter(characters);
+        
+        return choice13;
+    }
+
+
+
+
+
+    static List<Monster> CloneMonster(List<Monster> _monsters)
+    {
+        List<Character> characters = [];
+        foreach(Monster M in _monsters)
+        {
+            characters.Add(M);
+        }
+
+        int choice14 = chooseCharacter(characters);
+
+        Monster original = _monsters[choice14-1];
+
+        Monster copy = original.Clone();
+
+        Console.WriteLine(" ");
+        copy.UpdateMonsterID(copy.GetMonsterIDFromUser());
+
+        _monsters.Add(copy);
+        return _monsters;
+    }
+
+
+
+
+
+    static List<PlayerCharacter> editPlayerCharacter(List<PlayerCharacter> _playerCharacters,int choice)
+    {
+
+        PlayerCharacter PC = _playerCharacters[choice -1];
+
+        string choice16 = "";
+        while (choice16 != "8")
+        {
+            Console.WriteLine("What would you like to edit?\n");
+            Console.WriteLine("1: Player's Name\n2: Character's Name\n3: AC\n4: Current HP\n5: Max HP\n6: Initiative Bonus\n7: Conditions\n8: Quit");
+            choice16 = Console.ReadLine();
+            while (choice16 != "1" & choice16 != "2" & choice16 != "3" & choice16 != "4" & choice16 != "5" & choice16 != "6" & choice16 != "7" & choice16 != "8")
+            {
+                Console.WriteLine("Invaild Input, Please Try again.");
+                choice16 = Console.ReadLine();
+            }
+            if (choice16 == "1")
+            {
+                PC.UpdatePlayerName(PC.GetPlayerNameFromUser());
+            }
+            else if (choice16 == "2")
+            {
+               PC.UpdateName(PC.GetCharacterNameFromUser()); 
+            }
+            else if (choice16 == "3")
+            {
+              PC.UpdateAC(PC.GetCharacterACFromUser());  
+            }
+            else if (choice16 == "4")
+            {
+              PC.UpdateCurrentHP(PC.GetCurrentHPFromUser());  
+            }
+            else if (choice16 == "5")
+            {
+                PC.UpdateMaxHP(PC.GetMaxHPFromUser());
+            }
+            else if (choice16 == "6")
+            {
+                PC.UpdateInitiativeBonus(PC.GetInitiativeBonusFromUser());
+            }
+            else if (choice16 == "7")
+            {
+                if(PC.GetActiveConditions() is not null)
+                {
+                   foreach (string condition in PC.GetActiveConditions())
+                    {
+                        Console.Write($"{condition}, ");
+                    } 
+                    Console.WriteLine(" ");
+                }
+                Console.WriteLine("\n\n1: Add Condition\n2: Remove Condition\n3: Clear Conditions\n4: Back");
+                string choice17 = Console.ReadLine();
+                while (choice17 != "1" & choice17!= "2" & choice17!= "3" & choice17!= "4")
+                {
+                    Console.WriteLine("Invaild Input, Please Try again.");
+                    choice17 = Console.ReadLine();
+                }
+                if (choice17 == "1")
+                {
+                    Console.WriteLine("What Condition do you add?");
+                    string Condition = Console.ReadLine();
+                    PC.AddCondition(Condition);
+                }
+                else if (choice17 == "2")
+                {
+                    PC.RemoveCondition();
+                }
+                else if (choice17 == "3")
+                {
+                    PC.ClearConditions();
+                }
+            }
+        } 
+        return _playerCharacters; 
+    }
+
+
+
+
+
+    static List<Monster> EditMonster(List<Monster> _monsters, int choice)
+    {
+        Monster M = _monsters[choice -1];
+
+        string choice16 = "";
+        while (choice16 != "9")
+        {
+            Console.WriteLine("What would you like to edit?\n");
+            Console.WriteLine("1: Monster's Name\n2: Monster's ID\n3: AC\n4: Current HP\n5: Max HP\n6: Initiative Bonus\n7: Conditions\n8: Ability Scores\n9: Quit");
+            choice16 = Console.ReadLine();
+            while (choice16 != "1" & choice16 != "2" & choice16 != "3" & choice16 != "4" & choice16 != "5" & choice16 != "6" & choice16 != "7" & choice16 != "8" & choice16 !="9")
+            {
+                Console.WriteLine("Invaild Input, Please Try again.");
+                choice16 = Console.ReadLine();
+            }
+            if (choice16 == "1")
+            {
+                M.UpdateName(M.GetCharacterNameFromUser());
+            }
+            else if (choice16 == "2")
+            {
+                M.UpdateMonsterID(M.GetMonsterIDFromUser());
+            }
+            else if (choice16 == "3")
+            {
+              M.UpdateAC(M.GetCharacterACFromUser());  
+            }
+            else if (choice16 == "4")
+            {
+              M.UpdateCurrentHP(M.GetCurrentHPFromUser());  
+            }
+            else if (choice16 == "5")
+            {
+                M.UpdateMaxHP(M.GetMaxHPFromUser());
+            }
+            else if (choice16 == "6")
+            {
+                M.UpdateInitiativeBonus(M.GetInitiativeBonusFromUser());
+            }
+            else if (choice16 == "7")
+            {
+                if(M.GetActiveConditions() is not null)
+                {
+                   foreach (string condition in M.GetActiveConditions())
+                    {
+                        Console.Write($"{condition}, ");
+                    } 
+                    Console.WriteLine(" ");
+                }
+                Console.WriteLine("\n\n1: Add Condition\n2: Remove Condition\n3: Clear Conditions\n4: Back");
+                string choice17 = Console.ReadLine();
+                while (choice17 != "1" & choice17!= "2" & choice17!= "3" & choice17!= "4")
+                {
+                    Console.WriteLine("Invaild Input, Please Try again.");
+                    choice17 = Console.ReadLine();
+                }
+                if (choice17 == "1")
+                {
+                    Console.WriteLine("What Condition do you add?");
+                    string Condition = Console.ReadLine();
+                    M.AddCondition(Condition);
+                }
+                else if (choice17 == "2")
+                {
+                    M.RemoveCondition();
+                }
+                else if (choice17 == "3")
+                {
+                    M.ClearConditions();
+                }
+            }
+            else if (choice16 == "8")
+            {
+                Console.WriteLine("Which Ability Do you want to update?");
+                Console.WriteLine("1: STR\n2: DEX\n3: CON\n4: INT\n5: WIS\n6: CHA\n7: None");
+                string choice18 = Console.ReadLine();
+                while (choice18 != "1" & choice18 != "2" & choice18 != "3" & choice18 != "4" & choice18 != "5" & choice18 != "6" & choice18 != "7")
+                {
+                    Console.WriteLine("Invaild Input, Please Try again.");
+                    choice18 = Console.ReadLine();
+                }
+                if (choice18 == "1")
+                {
+                    M.UpdateSTR(M.GetSTRFromUser());
+                }
+                else if (choice18 == "2")
+                {
+                    M.UpdateDEX(M.GetDEXFromUser());
+                    M.UpdateInitiativeBonus(M.modifierCalulator(M.GetDEX()));
+                }
+                else if (choice18 == "3")
+                {
+                    M.UpdateCON(M.GetCONFromUser());
+                }
+                else if (choice18 == "4")
+                {
+                    M.UpdateINT(M.GetINTFromUser());
+                }
+                else if (choice18 == "5")
+                {
+                    M.UpdateWIS(M.GetWISFromUser());
+                }
+                else if (choice18 == "6")
+                {
+                    M.UpdateCHA(M.GetCHAFromUser()); 
+                }
+            
+            }
+        }
+
+        return _monsters;
     }
 
 }

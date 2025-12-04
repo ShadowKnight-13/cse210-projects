@@ -56,6 +56,9 @@ public class Monster : Character
     }
 
 
+
+
+
     public string GetMonsterID()
     {
         return _monsterID;
@@ -94,6 +97,7 @@ public class Monster : Character
     {
         return $"{GetName()} ({GetMonsterID()})";
     }
+
 
 
 
@@ -152,6 +156,11 @@ public class Monster : Character
         return cha;
     }
 
+
+
+
+
+
     public int modifierCalulator(int input)
     {
         double x = input;
@@ -159,5 +168,12 @@ public class Monster : Character
         x -= 10;
         int output = (int)Math.Floor(x/2);
         return output;
+    }
+
+    public Monster Clone()
+    {
+        Monster copy = new Monster(this.GetName(), this.GetMonsterID(), this.GetAC(),this.GetMaxHP(), this.GetMaxHP(),this.GetSTR(), this.GetDEX(), this.GetCON(),this.GetINT(), this.GetWIS(), this.GetCHA()) {};
+
+        return copy;
     }
 }

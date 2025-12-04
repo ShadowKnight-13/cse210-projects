@@ -31,6 +31,11 @@ public class Initiative
         _Order = _Order.OrderByDescending(Character => Character.GetInitiative()).ToList();
     }
 
+
+
+
+
+
     public void CreateInitiativeOrder2(List<Character> characters)
     {
         var snapshot = new List<Character>(characters);
@@ -52,6 +57,11 @@ public class Initiative
         CreateInitiativeOrder(PCs, Ms);
     }
 
+
+
+
+
+
     public string GetCurrentTurn(int turn)
     {
         return _Order[turn].GetDisplayName();
@@ -67,6 +77,11 @@ public class Initiative
         return _Order;
     }
 
+
+
+
+
+
     public void DisplayOrder()
     {
         int counter1 = 1;
@@ -77,6 +92,10 @@ public class Initiative
             counter1++;
         }
     }
+
+
+
+
 
     public void DisplayConditions()
     {
@@ -91,6 +110,10 @@ public class Initiative
             counter1++;
         }
     }
+
+
+
+
 
     public int ChoiceOfCharacter(bool quitOption=false)
     {

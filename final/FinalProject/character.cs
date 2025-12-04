@@ -25,6 +25,8 @@ public abstract class Character
         UpdateCurrentHP(currentHP);
     }
 
+
+
     public void UpdateName(string name)
     {
         _name = name;
@@ -54,6 +56,8 @@ public abstract class Character
     { 
         _linearInitiativeStick = input;   
     }
+
+
 
 
 
@@ -95,6 +99,7 @@ public abstract class Character
 
 
 
+
     public void TakeDamage(int damage)
     {
         _currentHP -= damage;
@@ -133,6 +138,7 @@ public abstract class Character
     {
         return _activeConditions;
     }
+
 
 
 
@@ -197,6 +203,7 @@ public abstract class Character
         int output = GetNumberFromUser();
         return output;
     }
+
 
 
 

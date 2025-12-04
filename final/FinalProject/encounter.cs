@@ -14,6 +14,7 @@ public class Encounter
         int True = 0;
         int False = 0;
 
+        try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
 
         fight.CreateInitiativeOrder(_playerCharacters, _monsters);
         List<Character> characters = fight.GetOrder();
@@ -32,10 +33,11 @@ public class Encounter
 
         if (True > False) { linearInitiative = true; }
 
+        
 
         while (choice2 != "quit")
         {
-            Console.WriteLine($"Round: {round} | Turn: {turn} | {fight.GetCurrentTurn(turn-1)}");
+            Console.WriteLine($"\nRound: {round} | Turn: {turn} | {fight.GetCurrentTurn(turn-1)}");
             Console.WriteLine($"Hp: {characters[turn-1].GetCurrentHP()}/{characters[turn-1].GetMaxHP()} | AC: {characters[turn-1].GetAC()}");
             
             if(characters[turn-1].GetActiveConditions() is not null)
@@ -58,6 +60,7 @@ public class Encounter
 
             if (choice2 == "1")
             {
+                try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
                 Console.WriteLine($"Round: {round} | Turn: {turn} | {fight.GetCurrentTurn(turn-1)}");
                 Console.WriteLine($"Hp: {characters[turn-1].GetCurrentHP()}/{characters[turn-1].GetMaxHP()} | AC: {characters[turn-1].GetAC()}\n");
                 fight.DisplayOrder();
@@ -67,7 +70,7 @@ public class Encounter
             }
             else if (choice2 == "2")
             {
-                
+                try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
                 Console.WriteLine($"Round: {round} | Turn: {turn} | {fight.GetCurrentTurn(turn-1)}");
                 Console.WriteLine($"Hp: {characters[turn-1].GetCurrentHP()}/{characters[turn-1].GetMaxHP()} | AC: {characters[turn-1].GetAC()}\n");
                 fight.DisplayOrder();
@@ -88,6 +91,7 @@ public class Encounter
             }
             else if (choice2 == "3")
             {
+                try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
                 int choice6 = 0;
                 Console.WriteLine($"Round: {round} | Turn: {turn} | {fight.GetCurrentTurn(turn-1)}");
                 Console.WriteLine($"Hp: {characters[turn-1].GetCurrentHP()}/{characters[turn-1].GetMaxHP()} | AC: {characters[turn-1].GetAC()}\n");
@@ -169,6 +173,7 @@ public class Encounter
             }
             else if (choice2 == "4")
             {
+                try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
                 Console.WriteLine($"Round: {round} | Turn: {turn} | {fight.GetCurrentTurn(turn-1)}");
                 Console.WriteLine($"Hp: {characters[turn-1].GetCurrentHP()}/{characters[turn-1].GetMaxHP()} | AC: {characters[turn-1].GetAC()}\n");
                 fight.DisplayConditions();
