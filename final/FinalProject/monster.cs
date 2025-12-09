@@ -13,6 +13,7 @@ public class Monster : Character
     private string _monsterID;
     public Monster(string name, string monsterID, int AC, int maxHP, int currentHP, int str, int dex, int con, int Int, int wis, int cha) : base(name,AC,maxHP,currentHP)
     {
+        UpdateMonsterID(monsterID);
         UpdateSTR(str);
         UpdateDEX(dex);
         UpdateCON(con);

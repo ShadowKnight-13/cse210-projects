@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 
 public class Encounter
 {
@@ -10,7 +11,7 @@ public class Encounter
         string choice2 = "";
         int round = 1;
         int turn = 1;
-        bool linearInitiative = true;
+        bool linearInitiative = false;
         int True = 0;
         int False = 0;
 
@@ -21,7 +22,7 @@ public class Encounter
 
         foreach (Character c in characters)
         {
-            if (c.GetLinearInitiativeStick() == true)
+            if (c.GetLinearInitiativeStick())
             {
                 True++;
             }
@@ -32,6 +33,7 @@ public class Encounter
         }
 
         if (True > False) { linearInitiative = true; }
+        else { linearInitiative = false;}
 
         
 
@@ -49,10 +51,11 @@ public class Encounter
                 Console.WriteLine(" ");
             }
 
-            Console.WriteLine($"\n1: See Order\n2: Damage \n3: Saving Throw\n4: Add/Remove Condition\n5: Next Turn\n6: Quit");
+            // Add new option roll dice and update if statements to refect new menu
+            Console.WriteLine($"\n1: See Order\n2: Damage \n3: Saving Throw\n4: Roll Dice\n5: Add/Remove Condition\n6: Remove Character\n7: Next Turn\n8: Quit");
             choice2 = Console.ReadLine();
 
-            while (choice2 != "1" & choice2!= "2" & choice2!= "3" & choice2!= "4" & choice2!= "5" & choice2!= "6")
+            while (choice2 != "1" & choice2!= "2" & choice2!= "3" & choice2!= "4" & choice2!= "5" & choice2!= "6" & choice2!= "7" & choice2!= "8")
             {
                 Console.WriteLine("Invaild Input, Please Try again.");
                 choice2 = Console.ReadLine();
@@ -70,15 +73,13 @@ public class Encounter
             }
             else if (choice2 == "2")
             {
-                try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
-                Console.WriteLine($"Round: {round} | Turn: {turn} | {fight.GetCurrentTurn(turn-1)}");
-                Console.WriteLine($"Hp: {characters[turn-1].GetCurrentHP()}/{characters[turn-1].GetMaxHP()} | AC: {characters[turn-1].GetAC()}\n");
+                DisplayTurnHeader(characters,round,turn,fight);
                 fight.DisplayOrder();
 
                 Console.WriteLine("Choose someone to Damage:");
                 int choice3 = fight.ChoiceOfCharacter();
 
-                Console.WriteLine("How much Damage is inflicted?");
+                Console.WriteLine("\nHow much Damage is inflicted?");
                 bool valid = false;
                 int damage = 0;
                 while (!valid)
@@ -91,10 +92,9 @@ public class Encounter
             }
             else if (choice2 == "3")
             {
-                try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
+                
                 int choice6 = 0;
-                Console.WriteLine($"Round: {round} | Turn: {turn} | {fight.GetCurrentTurn(turn-1)}");
-                Console.WriteLine($"Hp: {characters[turn-1].GetCurrentHP()}/{characters[turn-1].GetMaxHP()} | AC: {characters[turn-1].GetAC()}\n");
+                DisplayTurnHeader(characters,round,turn,fight);
 
                 while (choice6 != -100)
                 {
@@ -173,9 +173,7 @@ public class Encounter
             }
             else if (choice2 == "4")
             {
-                try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
-                Console.WriteLine($"Round: {round} | Turn: {turn} | {fight.GetCurrentTurn(turn-1)}");
-                Console.WriteLine($"Hp: {characters[turn-1].GetCurrentHP()}/{characters[turn-1].GetMaxHP()} | AC: {characters[turn-1].GetAC()}\n");
+                DisplayTurnHeader(characters,round,turn,fight);
                 fight.DisplayConditions();
 
                 Console.WriteLine("\n\n1: Add Condition\n2: Remove Condition\n3: Clear Conditions\n4: Back");
@@ -218,6 +216,22 @@ public class Encounter
             }
             else if (choice2 == "5")
             {
+                DisplayTurnHeader(characters,round,turn,fight);
+
+                fight.DisplayOrder();
+                Console.WriteLine($"{fight.CountOfCharacters() + 1}: Quit");
+
+                Console.WriteLine($"Who would you like to Remove from the encounter? (Type {fight.CountOfCharacters()+1} or Quit to quit)");
+                int choice20 = fight.ChoiceOfCharacter(true);
+
+                if (choice20 > 0)
+                {
+                    characters.RemoveAt(choice20 -1);
+                }
+                
+            }
+            else if (choice2 == "6")
+            {
                 turn++;
 
                 if (turn > characters.Count())
@@ -225,8 +239,11 @@ public class Encounter
                     round++;
                     turn = 1;
 
+                    try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
+
                     if (linearInitiative == false)
                     {
+                        Console.WriteLine(" ");
                         fight.CreateInitiativeOrder2(characters);
                         characters = fight.GetOrder();
                     }
@@ -239,5 +256,13 @@ public class Encounter
                 
             
         }
+    }
+
+
+    static void DisplayTurnHeader(List<Character> characters, int round, int turn, Initiative fight)
+    {
+        try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
+        Console.WriteLine($"Round: {round} | Turn: {turn} | {fight.GetCurrentTurn(turn-1)}");
+        Console.WriteLine($"Hp: {characters[turn-1].GetCurrentHP()}/{characters[turn-1].GetMaxHP()} | AC: {characters[turn-1].GetAC()}\n");
     }
 }

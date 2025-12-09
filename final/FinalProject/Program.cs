@@ -273,7 +273,7 @@ class Program
 
                 foreach (Character c in characters)
                 {
-                    if (c.GetLinearInitiativeStick() == true)
+                    if (c.GetLinearInitiativeStick())
                     {
                         True++;
                     }
@@ -476,6 +476,7 @@ class Program
         string choice16 = "";
         while (choice16 != "8")
         {
+            try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
             Console.WriteLine("What would you like to edit?\n");
             Console.WriteLine("1: Player's Name\n2: Character's Name\n3: AC\n4: Current HP\n5: Max HP\n6: Initiative Bonus\n7: Conditions\n8: Quit");
             choice16 = Console.ReadLine();

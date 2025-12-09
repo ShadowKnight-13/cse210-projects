@@ -10,6 +10,7 @@ public class PlayerCharacter : Character
     public PlayerCharacter(string playername, string name, int AC, int maxHP, int currentHP, int initiativeBonus) : base(name, AC, maxHP, currentHP)
     {
         UpdatePlayerName(playername);
+        UpdateInitiativeBonus(initiativeBonus);
     }
 
     public void UpdatePlayerName(string playername)
