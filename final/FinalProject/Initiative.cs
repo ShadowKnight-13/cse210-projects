@@ -8,15 +8,17 @@ public class Initiative
 
     
     
-    public void CreateInitiativeOrder(List<PlayerCharacter> _playerCharacters, List<Monster> _monsters)
+    public void CreateInitiativeOrder(List<PlayerCharacter> _playerCharacters, List<Monster> _monsters, Log log)
     {
         _Order.Clear();
         DiceRoller D20 = new DiceRoller();
 
+        
         foreach (PlayerCharacter pc in _playerCharacters)
         {
             pc.UpdateInitiative(D20.RollDice(20,pc.GetInitiativeBonus()));
             Console.WriteLine($"{pc.GetDisplayName()} rolled {pc.GetInitiative()}");
+            log.UpdateLog($"{DateTime.Now}: {pc.GetDisplayName()} rolled {pc.GetInitiative()} for Initiative.");
             _Order.Add(pc);
         }
 
@@ -24,6 +26,7 @@ public class Initiative
         {
             m.UpdateInitiative(D20.RollDice(20,m.modifierCalulator(m.GetDEX())));
             Console.WriteLine($"{m.GetDisplayName()} rolled {m.GetInitiative()}");
+            log.UpdateLog($"{DateTime.Now}: {m.GetDisplayName()} rolled {m.GetInitiative()} for Initiative.");
             _Order.Add(m);
         }
 
@@ -36,7 +39,7 @@ public class Initiative
 
 
 
-    public void CreateInitiativeOrder2(List<Character> characters)
+    public void CreateInitiativeOrder2(List<Character> characters,Log log)
     {
         var snapshot = new List<Character>(characters);
         List<PlayerCharacter> PCs = [];
@@ -54,7 +57,7 @@ public class Initiative
             }
         }
 
-        CreateInitiativeOrder(PCs, Ms);
+        CreateInitiativeOrder(PCs, Ms, log);
     }
 
 

@@ -8,6 +8,7 @@ public class Encounter
     {
         Initiative fight = new Initiative();
         DiceRoller dice = new DiceRoller();
+        Log log = new Log();
         string choice2 = "";
         int round = 1;
         int turn = 1;
@@ -17,7 +18,8 @@ public class Encounter
 
         try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
 
-        fight.CreateInitiativeOrder(_playerCharacters, _monsters);
+        log.UpdateLog("---Encounter Start---\n ");
+        fight.CreateInitiativeOrder(_playerCharacters, _monsters, log);
         List<Character> characters = fight.GetOrder();
 
         foreach (Character c in characters)
@@ -89,6 +91,15 @@ public class Encounter
                 }
                 
                 characters[choice3-1].TakeDamage(damage);
+
+                if (damage > 0)
+                {
+                    log.UpdateLog($"{DateTime.Now}: {fight.GetCurrentTurn(turn-1)} damaged {characters[choice3-1]} for {damage} point/s.");
+                }
+                else
+                {
+                    log.UpdateLog($"{DateTime.Now}: {fight.GetCurrentTurn(turn-1)} Healed {characters[choice3-1]} for {damage} point/s.");
+                }
             }
             else if (choice2 == "3")
             {
@@ -157,6 +168,8 @@ public class Encounter
                                     Console.WriteLine(dice.RollDice(20));
                                     break;                
                             }
+                            // fix log put into swtich case
+                            log.UpdateLog($"{DateTime.Now}: {fight.GetCurrentTurn(turn-1)} caused {m.GetDisplayName()} to make a save");
                             Console.WriteLine("Press [Enter] to Continue");
                             Console.ReadLine();
 
@@ -172,6 +185,10 @@ public class Encounter
                 }
             }
             else if (choice2 == "4")
+            {
+                // add diceroller here
+            }
+            else if (choice2 == "5")
             {
                 DisplayTurnHeader(characters,round,turn,fight);
                 fight.DisplayConditions();
@@ -214,7 +231,7 @@ public class Encounter
                 }
 
             }
-            else if (choice2 == "5")
+            else if (choice2 == "6")
             {
                 DisplayTurnHeader(characters,round,turn,fight);
 
@@ -230,7 +247,7 @@ public class Encounter
                 }
                 
             }
-            else if (choice2 == "6")
+            else if (choice2 == "7")
             {
                 turn++;
 
@@ -244,7 +261,7 @@ public class Encounter
                     if (linearInitiative == false)
                     {
                         Console.WriteLine(" ");
-                        fight.CreateInitiativeOrder2(characters);
+                        fight.CreateInitiativeOrder2(characters, log);
                         characters = fight.GetOrder();
                     }
                 }

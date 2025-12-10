@@ -9,6 +9,8 @@ class Program
         List<PlayerCharacter> _playerCharacters = [];
         List<Monster> _monsters = [];
 
+        FileLoader file = new FileLoader();
+
         
         Console.WriteLine("Welcome to the DND Encounter Tracker!\n");
         int choice1num = DisplayMenu();
@@ -18,9 +20,56 @@ class Program
             switch (choice1num)
             {
                 case 1:
+
+                    Console.WriteLine("Choose what type of file would you like to load?\n1: Player Character\n2: Monster\n3: Back");
+                    string choiceload = Console.ReadLine();
+
+                    while (choiceload != "1" & choiceload != "2" & choiceload != "3")
+                    {
+                        Console.WriteLine("Invaild input please try again");
+                        choiceload = Console.ReadLine();
+                    }
+
+                    if (choiceload == "1")
+                    {
+                        List<PlayerCharacter> loaded_characters = file.LoadPlayerCharacterFile();
+
+                        foreach(PlayerCharacter pc in loaded_characters)
+                        {
+                            _playerCharacters.Add(pc);
+                        }
+                    }
+                    else if (choiceload == "2")
+                    {
+                        List<Monster> loaded_monsters = file.LoadMonsterFile();
+
+                        foreach(Monster M in loaded_monsters)
+                        {
+                            _monsters.Add(M);
+                        }
+                    }
                     break;
 
                 case 2:
+
+                    Console.WriteLine("What would you like to save?\n1: Player Characters\n2: Monsters\n3: Back");
+                    string choicesave = Console.ReadLine();
+
+                    while (choicesave != "1" & choicesave != "2" & choicesave != "3")
+                    {
+                        Console.WriteLine("Invaild input please try again.");
+                        choicesave = Console.ReadLine();
+                    }
+
+                    if (choicesave == "1")
+                    {
+                        file.SavePlayerCharacters(_playerCharacters);
+                    }
+                    else if (choicesave == "2")
+                    {
+                        file.SaveMonsters(_monsters);
+                    }
+
                     break;
 
                 case 3:
@@ -64,7 +113,6 @@ class Program
 
     static int DisplayMenu()
     {
-        try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
         Console.WriteLine("Choose an option from the menu below.");
         Console.WriteLine("1: Load File\n2: Save File\n3: Add Player Character\n4: Add Monster\n5: Start Encounter\n6: Edit Encounter\n7: View Log\n8: Quit");
 
@@ -186,7 +234,7 @@ class Program
         {
             try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
             Console.WriteLine("What do you wish to edit?");
-            Console.WriteLine("1: Remove Character\n2: Clone Monster\n3: Edit Player Character\n4: Edit Monster\n5: Toggle Linear Initivate\n6: Quit");
+            Console.WriteLine("1: Remove Character\n2: Clone Monster\n3: Edit Player Character\n4: Edit Monster\n5: Toggle Linear Initivate\n6: Back");
 
             choice10 = Console.ReadLine();
 
@@ -202,8 +250,9 @@ class Program
                 int choice13 = CombinedChooseCharacter(_playerCharacters, _monsters);
 
                 if (choice13 == 0){}
-                else if (choice13 < _playerCharacters.Count())
+                else if (choice13 <= _playerCharacters.Count())
                 {
+                    Console.WriteLine(_playerCharacters.Count());
                     _playerCharacters.RemoveAt(choice13 - 1);
                 }
                 else
@@ -374,7 +423,8 @@ class Program
         }
         else
         {
-            Console.WriteLine("No Characters are currently loaded into this list.");
+            Console.WriteLine("No Characters are currently loaded into this list. Press [Enter to Continue]");
+            Console.ReadLine();
         }
         return 0;
     }
