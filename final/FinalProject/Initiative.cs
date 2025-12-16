@@ -67,6 +67,18 @@ public class Initiative
 
     public string GetCurrentTurn(int turn)
     {
+        if (_Order.Count() == 0)
+        {
+            return "[No characters]";
+        }
+        if (turn < 0)
+        {
+            turn = 0;
+        }
+        if (turn >= _Order.Count())
+        {
+            turn = _Order.Count() - 1;
+        }
         return _Order[turn].GetDisplayName();
     }
 
@@ -112,6 +124,7 @@ public class Initiative
             }
             counter1++;
         }
+        Console.WriteLine("");
     }
 
 
@@ -169,5 +182,8 @@ public class Initiative
         return choice;
     }
 
-
+    public void RemoveFromOrder(int choice)
+    {
+        _Order.RemoveAt(choice);
+    }
 }

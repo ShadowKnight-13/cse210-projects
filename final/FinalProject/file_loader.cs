@@ -6,6 +6,7 @@ public class FileLoader
 
     public void SavePlayerCharacters(List<PlayerCharacter> SaveList)
     {
+        try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
         Console.WriteLine("Enter the file name you want to save your entries into:");
         string filename = Console.ReadLine();
        
@@ -63,7 +64,7 @@ public List<Monster> LoadMonsterFile()
         bool file_used = false;
         List<Monster> NewMonsters = [];
 
-        Console.WriteLine("Enter the file name you want to load into the system: ");
+        Console.WriteLine(" \nEnter the file name you want to load into the system: ");
         string filenameOG = Console.ReadLine();
         string filename = $"..//..//..//{filenameOG}";
 
@@ -177,7 +178,7 @@ public List<Monster> LoadMonsterFile()
         bool file_used = false;
         List<PlayerCharacter> NewPlayers = [];
 
-        Console.WriteLine("Enter the file name you want to load into the system: ");
+        Console.WriteLine(" \nEnter the file name you want to load into the system: ");
         string filenameOG = Console.ReadLine();
         string filename = $"..//..//..//{filenameOG}";
 

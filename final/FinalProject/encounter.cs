@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Xml.Linq;
 
 public class Encounter
 {
@@ -10,15 +11,19 @@ public class Encounter
         DiceRoller dice = new DiceRoller();
         Log log = new Log();
         string choice2 = "";
+
         int round = 1;
         int turn = 1;
+        int turnmod = 1;
+
+
         bool linearInitiative = false;
         int True = 0;
         int False = 0;
 
         try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
 
-        log.UpdateLog("---Encounter Start---\n ");
+        log.UpdateLog("--Encounter Start--");
         fight.CreateInitiativeOrder(_playerCharacters, _monsters, log);
         List<Character> characters = fight.GetOrder();
 
@@ -41,19 +46,22 @@ public class Encounter
 
         while (choice2 != "quit")
         {
-            Console.WriteLine($"\nRound: {round} | Turn: {turn} | {fight.GetCurrentTurn(turn-1)}");
-            Console.WriteLine($"Hp: {characters[turn-1].GetCurrentHP()}/{characters[turn-1].GetMaxHP()} | AC: {characters[turn-1].GetAC()}");
-            
-            if(characters[turn-1].GetActiveConditions() is not null)
+            int idx = Math.Clamp(turn - turnmod, 0, Math.Max(characters.Count() - 1, 0));
+            Console.WriteLine($"\nRound: {round} | Turn: {turn} | {fight.GetCurrentTurn(idx)}");
+            if (characters.Count() > 0)
             {
-               foreach (string condition in characters[turn-1].GetActiveConditions())
+                Console.WriteLine($"Hp: {characters[idx].GetCurrentHP()}/{characters[idx].GetMaxHP()} | AC: {characters[idx].GetAC()}");
+            }
+            
+            if (characters.Count() > 0 && characters[idx].GetActiveConditions() is not null)
+            {
+               foreach (string condition in characters[idx].GetActiveConditions())
                 {
                     Console.Write($"{condition}, ");
                 } 
                 Console.WriteLine(" ");
             }
 
-            // Add new option roll dice and update if statements to refect new menu
             Console.WriteLine($"\n1: See Order\n2: Damage \n3: Saving Throw\n4: Roll Dice\n5: Add/Remove Condition\n6: Remove Character\n7: Next Turn\n8: Quit");
             choice2 = Console.ReadLine();
 
@@ -66,16 +74,20 @@ public class Encounter
             if (choice2 == "1")
             {
                 try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
-                Console.WriteLine($"Round: {round} | Turn: {turn} | {fight.GetCurrentTurn(turn-1)}");
-                Console.WriteLine($"Hp: {characters[turn-1].GetCurrentHP()}/{characters[turn-1].GetMaxHP()} | AC: {characters[turn-1].GetAC()}\n");
+                idx = Math.Clamp(turn - turnmod, 0, Math.Max(characters.Count() - 1, 0));
+                Console.WriteLine($"Round: {round} | Turn: {turn} | {fight.GetCurrentTurn(idx)}");
+                if (characters.Count() > 0)
+                {
+                    Console.WriteLine($"Hp: {characters[idx].GetCurrentHP()}/{characters[idx].GetMaxHP()} | AC: {characters[idx].GetAC()}\n");
+                }
                 fight.DisplayOrder();
                 Console.WriteLine("\nPress [Enter] to Continue.");
                 Console.ReadLine();
-                
+                try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
             }
             else if (choice2 == "2")
             {
-                DisplayTurnHeader(characters,round,turn,fight);
+                DisplayTurnHeader(characters,round,turn,fight,turnmod);
                 fight.DisplayOrder();
 
                 Console.WriteLine("Choose someone to Damage:");
@@ -94,18 +106,19 @@ public class Encounter
 
                 if (damage > 0)
                 {
-                    log.UpdateLog($"{DateTime.Now}: {fight.GetCurrentTurn(turn-1)} damaged {characters[choice3-1]} for {damage} point/s.");
+                    log.UpdateLog($"{DateTime.Now}: {fight.GetCurrentTurn(turn - turnmod)} damaged {characters[choice3-1].GetDisplayName()} for {damage} point/s.");
                 }
                 else
                 {
-                    log.UpdateLog($"{DateTime.Now}: {fight.GetCurrentTurn(turn-1)} Healed {characters[choice3-1]} for {damage} point/s.");
+                    log.UpdateLog($"{DateTime.Now}: {fight.GetCurrentTurn(turn - turnmod)} Healed {characters[choice3-1].GetDisplayName()} for {damage} point/s.");
                 }
+                try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
             }
             else if (choice2 == "3")
             {
                 
                 int choice6 = 0;
-                DisplayTurnHeader(characters,round,turn,fight);
+                DisplayTurnHeader(characters,round,turn,fight,turnmod);
 
                 while (choice6 != -100)
                 {
@@ -138,45 +151,59 @@ public class Encounter
                                 else { Console.WriteLine("Please enter the number index"); choice7 = Console.ReadLine();}
                             }
 
+                            int roll;
                             switch (choice7num)
                             {
                                 case 1:
-                                    Console.WriteLine(dice.RollDice(20, m.modifierCalulator(m.GetSTR())));
+                                    roll = dice.RollDice(20, m.modifierCalulator(m.GetSTR()));
+                                    Console.WriteLine(roll);
+                                    log.UpdateLog($"{DateTime.Now}: {fight.GetCurrentTurn(turn - turnmod)} caused {m.GetDisplayName()} to make a STR saving throw. [{roll}]");
                                     break;
 
                                 case 2:
-                                    Console.WriteLine(dice.RollDice(20, m.modifierCalulator(m.GetDEX())));
+                                    roll = dice.RollDice(20, m.modifierCalulator(m.GetDEX()));
+                                    Console.WriteLine(roll);
+                                    log.UpdateLog($"{DateTime.Now}: {fight.GetCurrentTurn(turn - turnmod)} caused {m.GetDisplayName()} to make a DEX saving throw. [{roll}]");
                                     break; 
 
                                 case 3:
-                                    Console.WriteLine(dice.RollDice(20, m.modifierCalulator(m.GetCON())));
+                                    roll = dice.RollDice(20, m.modifierCalulator(m.GetCON()));
+                                    Console.WriteLine(roll);
+                                    log.UpdateLog($"{DateTime.Now}: {fight.GetCurrentTurn(turn - turnmod)} caused {m.GetDisplayName()} to make a CON saving throw. [{roll}]");
                                     break;
 
                                 case 4:
-                                    Console.WriteLine(dice.RollDice(20, m.modifierCalulator(m.GetINT())));
+                                    roll = dice.RollDice(20, m.modifierCalulator(m.GetINT()));
+                                    Console.WriteLine(roll);
+                                    log.UpdateLog($"{DateTime.Now}: {fight.GetCurrentTurn(turn - turnmod)} caused {m.GetDisplayName()} to make a INT saving throw. [{roll}]");
                                     break;
 
                                 case 5:
-                                    Console.WriteLine(dice.RollDice(20, m.modifierCalulator(m.GetWIS())));
+                                    roll = dice.RollDice(20, m.modifierCalulator(m.GetWIS()));
+                                    Console.WriteLine(roll);
+                                    log.UpdateLog($"{DateTime.Now}: {fight.GetCurrentTurn(turn - turnmod)} caused {m.GetDisplayName()} to make a WIS saving throw. [{roll}]");
                                     break;
 
                                 case 6:
-                                    Console.WriteLine(dice.RollDice(20, m.modifierCalulator(m.GetCHA())));
+                                    roll = dice.RollDice(20, m.modifierCalulator(m.GetCHA()));
+                                    Console.WriteLine(roll);
+                                    log.UpdateLog($"{DateTime.Now}: {fight.GetCurrentTurn(turn - turnmod)} caused {m.GetDisplayName()} to make a CHA saving throw. [{roll}]");
                                     break;
 
                                 case 7:
-                                    Console.WriteLine(dice.RollDice(20));
+                                    roll = dice.RollDice(20);
+                                    Console.WriteLine(roll);
+                                    log.UpdateLog($"{DateTime.Now}: {fight.GetCurrentTurn(turn - turnmod)} caused {m.GetDisplayName()} to make a saving throw. [{roll}]");
                                     break;                
                             }
-                            // fix log put into swtich case
-                            log.UpdateLog($"{DateTime.Now}: {fight.GetCurrentTurn(turn-1)} caused {m.GetDisplayName()} to make a save");
                             Console.WriteLine("Press [Enter] to Continue");
                             Console.ReadLine();
 
                         }
                         else
                         {
-                            Console.WriteLine($"{characters[choice6-1].GetName()} has to make a saving throw.");
+                            Console.WriteLine($"{characters[choice6-1].GetDisplayName()} has to make a saving throw.");
+                            log.UpdateLog($"{DateTime.Now}: {fight.GetCurrentTurn(turn - turnmod)} caused {characters[choice6-1].GetDisplayName()} to make a saving throw.");
                             Console.WriteLine("Press [Enter] to Continue");
                             Console.ReadLine(); 
                         }
@@ -186,14 +213,28 @@ public class Encounter
             }
             else if (choice2 == "4")
             {
-                // add diceroller here
+                DisplayTurnHeader(characters,round,turn,fight,turnmod);
+
+                Console.WriteLine(" \nHow many sides are on the dice?");
+                idx = Math.Clamp(turn - turnmod, 0, Math.Max(characters.Count() - 1, 0));
+                int diceSides = characters[idx].GetNumberFromUser();
+                Console.WriteLine(" \nHow many Dice do you wish to roll?");
+                int numOfDice = characters[idx].GetNumberFromUser();
+
+                int roll = dice.RollDice(diceSides,0,numOfDice);
+                Console.WriteLine($" \n{roll}");
+                log.UpdateLog($"{DateTime.Now}: {fight.GetCurrentTurn(idx)} rolled {numOfDice} {diceSides} sided dice. [{roll}]");
+                Console.WriteLine("Press [Enter] to Continue");
+                Console.ReadLine();
             }
             else if (choice2 == "5")
             {
-                DisplayTurnHeader(characters,round,turn,fight);
+                DisplayTurnHeader(characters,round,turn,fight,turnmod);
+                Console.WriteLine("Character's Conditions");
                 fight.DisplayConditions();
 
-                Console.WriteLine("\n\n1: Add Condition\n2: Remove Condition\n3: Clear Conditions\n4: Back");
+                Console.WriteLine(" \n Menu Options:");
+                Console.WriteLine("1: Add Condition\n2: Remove Condition\n3: Clear Conditions\n4: Back");
                 string choice4 = Console.ReadLine();
 
                 while (choice4 != "1" & choice4!= "2" & choice4!= "3" & choice4!= "4")
@@ -205,56 +246,67 @@ public class Encounter
                 if (choice4 == "1")
                 {
                     fight.DisplayConditions();
-                    Console.WriteLine("Which character would you like to add a Condition to?");
+                    Console.WriteLine(" \nWhich character would you like to add a Condition to?");
                     int choice5 = fight.ChoiceOfCharacter();
 
                     Console.WriteLine("What Condition do you add?");
                     string Condition = Console.ReadLine();
 
                     characters[choice5-1].AddCondition(Condition);
+                    log.UpdateLog($"{DateTime.Now}: {fight.GetCurrentTurn(turn - turnmod)} added the '{Condition}' condition to {characters[choice5 - 1].GetDisplayName()}");
                 }
                 else if (choice4 == "2")
                 {
                     fight.DisplayConditions();
-                    Console.WriteLine("Which character would you like to remove a Condition from?");
+                    Console.WriteLine(" \nWhich character would you like to remove a Condition from?\n ");
                     int choice5 = fight.ChoiceOfCharacter();
 
                     characters[choice5-1].RemoveCondition();
+                    log.UpdateLog($"{DateTime.Now}: {characters[choice5 - 1].GetDisplayName()} had a condition was removed.");
+
                 }
                 else if (choice4 == "3")
                 {
                     fight.DisplayConditions();
-                    Console.WriteLine("Which character would you like to clear of all Conditions?");
+                    Console.WriteLine(" \nWhich character would you like to clear of all Conditions?\n ");
                     int choice5 = fight.ChoiceOfCharacter();
 
                     characters[choice5-1].ClearConditions();
+                    log.UpdateLog($"{DateTime.Now}: {characters[choice5 - 1].GetDisplayName()} was cleared of all conditions.");
                 }
 
             }
             else if (choice2 == "6")
             {
-                DisplayTurnHeader(characters,round,turn,fight);
+                DisplayTurnHeader(characters,round,turn,fight,turnmod);
 
                 fight.DisplayOrder();
                 Console.WriteLine($"{fight.CountOfCharacters() + 1}: Quit");
 
-                Console.WriteLine($"Who would you like to Remove from the encounter? (Type {fight.CountOfCharacters()+1} or Quit to quit)");
+                Console.WriteLine($"Who would you like to remove from the encounter? (Type {fight.CountOfCharacters()+1} or Quit to quit)");
                 int choice20 = fight.ChoiceOfCharacter(true);
 
-                if (choice20 > 0)
+                if (choice20 > 0 & choice20 <=characters.Count())
                 {
-                    characters.RemoveAt(choice20 -1);
+                    log.UpdateLog($"{DateTime.Now}: {characters[choice20 - 1].GetDisplayName()} was removed from the encounter.");
+                    
+                    fight.RemoveFromOrder(choice20 -1);
+                    characters = fight.GetOrder();
+                    turnmod +=1;
                 }
+                
                 
             }
             else if (choice2 == "7")
             {
                 turn++;
+                try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
 
                 if (turn > characters.Count())
                 {
                     round++;
                     turn = 1;
+                    turnmod = 1;
 
                     try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
 
@@ -269,17 +321,34 @@ public class Encounter
             else
             {
                 choice2 = "quit";
+                log.UpdateLog("--Encounter End--");
+
+                Console.WriteLine(" \nDo you wish to save this encounter's log? (Y/N)");
+                string savelog = Console.ReadLine().ToUpper();
+
+                while (savelog != "Y" & savelog != "N")
+                {
+                    Console.WriteLine("Invaild Input, Please Try again.");
+                    savelog = Console.ReadLine();
+                }
+
+                if (savelog == "Y")
+                {
+                    log.SaveLog();
+                }
             }
-                
-            
         }
     }
 
 
-    static void DisplayTurnHeader(List<Character> characters, int round, int turn, Initiative fight)
+    static void DisplayTurnHeader(List<Character> characters, int round, int turn, Initiative fight, int turnmod)
     {
         try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
-        Console.WriteLine($"Round: {round} | Turn: {turn} | {fight.GetCurrentTurn(turn-1)}");
-        Console.WriteLine($"Hp: {characters[turn-1].GetCurrentHP()}/{characters[turn-1].GetMaxHP()} | AC: {characters[turn-1].GetAC()}\n");
+        int idx = Math.Clamp(turn - turnmod, 0, Math.Max(characters.Count() - 1, 0));
+        Console.WriteLine($"Round: {round} | Turn: {turn} | {fight.GetCurrentTurn(idx)}");
+        if (characters.Count() > 0)
+        {
+            Console.WriteLine($"Hp: {characters[idx].GetCurrentHP()}/{characters[idx].GetMaxHP()} | AC: {characters[idx].GetAC()}\n");
+        }
     }
 }

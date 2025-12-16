@@ -21,6 +21,7 @@ class Program
             {
                 case 1:
 
+                    try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
                     Console.WriteLine("Choose what type of file would you like to load?\n1: Player Character\n2: Monster\n3: Back");
                     string choiceload = Console.ReadLine();
 
@@ -98,6 +99,7 @@ class Program
                     break;
 
                 case 7:
+                    viewLog();
                     break;
 
                 case 8:
@@ -257,6 +259,7 @@ class Program
                 }
                 else
                 {
+                    choice13 -= _playerCharacters.Count();
                     _monsters.RemoveAt(choice13 - 1);
                 }
 
@@ -528,13 +531,15 @@ class Program
         {
             try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
             Console.WriteLine("What would you like to edit?\n");
-            Console.WriteLine("1: Player's Name\n2: Character's Name\n3: AC\n4: Current HP\n5: Max HP\n6: Initiative Bonus\n7: Conditions\n8: Quit");
+            Console.WriteLine("1: Player's Name\n2: Character's Name\n3: AC\n4: Current HP\n5: Max HP\n6: Initiative Bonus\n7: Conditions\n8: Back");
             choice16 = Console.ReadLine();
             while (choice16 != "1" & choice16 != "2" & choice16 != "3" & choice16 != "4" & choice16 != "5" & choice16 != "6" & choice16 != "7" & choice16 != "8")
             {
                 Console.WriteLine("Invaild Input, Please Try again.");
                 choice16 = Console.ReadLine();
             }
+
+            try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
             if (choice16 == "1")
             {
                 PC.UpdatePlayerName(PC.GetPlayerNameFromUser());
@@ -710,6 +715,41 @@ class Program
         }
 
         return _monsters;
+    }
+
+    static void viewLog()
+    {
+        Console.WriteLine("Enter the file name you want to load into the system: ");
+        string filenameOG = Console.ReadLine();
+        string filename = $"..//..//..//{filenameOG}";
+
+        try
+        { 
+            string[] lines = System.IO.File.ReadAllLines(filenameOG);
+            foreach (string line in lines)
+            {
+                Console.WriteLine(line);
+            }
+        }
+        catch (FileNotFoundException)
+        {
+            Console.WriteLine($"Error: The file '{filenameOG}' was not found, Trying Alternitive methood.");
+            Thread.Sleep(3000);
+
+            try
+            { 
+                string[] lines = System.IO.File.ReadAllLines(filename);
+                foreach (string line in lines)
+                {
+                    Console.WriteLine(line);
+                }
+            }
+            catch (FileNotFoundException)
+            {
+                Console.WriteLine($"Error: The file '{filenameOG}' and '{filename}' was not found. Press [Enter to Continue]");
+                Console.ReadLine();
+            }
+        }
     }
 
 }
