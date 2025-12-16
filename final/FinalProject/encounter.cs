@@ -15,7 +15,7 @@ public class Encounter
         int round = 1;
         int turn = 1;
         int turnmod = 1;
-
+        int characterRemoved = 0;
 
         bool linearInitiative = false;
         int True = 0;
@@ -210,6 +210,7 @@ public class Encounter
                         
                     }
                 }
+                try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
             }
             else if (choice2 == "4")
             {
@@ -274,7 +275,7 @@ public class Encounter
                     characters[choice5-1].ClearConditions();
                     log.UpdateLog($"{DateTime.Now}: {characters[choice5 - 1].GetDisplayName()} was cleared of all conditions.");
                 }
-
+                try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
             }
             else if (choice2 == "6")
             {
@@ -292,29 +293,57 @@ public class Encounter
                     
                     fight.RemoveFromOrder(choice20 -1);
                     characters = fight.GetOrder();
-                    turnmod +=1;
+
+                    if (choice20 < turn)
+                    {
+                        turnmod += 1;
+                        characterRemoved += 1;
+                    }
+                    
                 }
                 
-                
+                try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
             }
             else if (choice2 == "7")
             {
                 turn++;
                 try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
 
-                if (turn > characters.Count())
+                if (characterRemoved >0)
                 {
-                    round++;
-                    turn = 1;
-                    turnmod = 1;
+                    if (turn > (characters.Count() + characterRemoved)){
 
-                    try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
+                        round++;
+                        turn = 1;
+                        turnmod = 1;
+                        characterRemoved = 0;
+                        log.UpdateLog("");
+                        try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
+                        if (linearInitiative == false)
+                        {
+                            Console.WriteLine(" ");
+                            fight.CreateInitiativeOrder2(characters, log);
+                            characters = fight.GetOrder();
+                        }
+                    }
+                }
+                else
+                {
 
-                    if (linearInitiative == false)
+                    if (turn > characters.Count())
                     {
-                        Console.WriteLine(" ");
-                        fight.CreateInitiativeOrder2(characters, log);
-                        characters = fight.GetOrder();
+                        round++;
+                        turn = 1;
+                        turnmod = 1;
+                        log.UpdateLog("");
+                        try { Console.Clear(); } catch (IOException) { Console.WriteLine("Console.Clear() failed."); }
+
+                        if (linearInitiative == false)
+                        {
+                            Console.WriteLine(" ");
+                            fight.CreateInitiativeOrder2(characters, log);
+                            characters = fight.GetOrder();
+                        }
                     }
                 }
             }
