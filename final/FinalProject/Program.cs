@@ -730,6 +730,8 @@ class Program
             {
                 Console.WriteLine(line);
             }
+            Console.WriteLine("\n\nPress [Enter to Continue]");
+            Console.ReadLine();
         }
         catch (FileNotFoundException)
         {
@@ -743,6 +745,8 @@ class Program
                 {
                     Console.WriteLine(line);
                 }
+                Console.WriteLine("\n\nPress [Enter to Continue]");
+                Console.ReadLine();
             }
             catch (FileNotFoundException)
             {
